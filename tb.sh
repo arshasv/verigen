@@ -1,3 +1,5 @@
+#!/bin/bash
+
 rm a.out
 random_string=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
 file_name="output_${random_string}.txt"
