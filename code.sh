@@ -1,9 +1,8 @@
 #!/bin/bash
 
-rm a.out
 random_string=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
 file_name="output_${random_string}.txt"
-iverilog -o halfadder_wav halfadder.v halfadder_tb.v > "$file_name" 2>&1
+iverilog halfadder.v > "$file_name" 2>&1
 
 if [ -s "$file_name" ]; then
 	curl --location 'https://genesisforge.openai.azure.com/openai/deployments/gpt-35-turbo/chat/completions?api-version=2023-03-15-preview&api-key=0efc6bbadac9465381b4886e2698b420' \
@@ -27,5 +26,9 @@ if [ -s "$file_name" ]; then
   	  "stop": null
         }'
 else
-	vvp halfadder_wav 
+	curl --location 'https://verilogcodegen.azurewebsites.net/auth/register' \
+        --header 'Content-Type: application/json' \
+        --data '{
+	  "content": "Generate corresponding testbench for the verilog code with $dumpfile and $dumpvars"
+	}'
 fi	
